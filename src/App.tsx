@@ -94,6 +94,9 @@ type StatsMart = {
     date: string
     shortName: string
     venue: string
+    time?: string
+    tv?: string
+    collectionMethod?: string
   }>
   injuries: Array<{
     teamId: string
@@ -122,6 +125,8 @@ type WarRoomRow = {
   marketWatch: string
   angle: string
 }
+
+type DataView = 'roster' | 'stats' | 'news' | 'schedule'
 
 const fallbackSnapshot: Snapshot = {
   generatedAt: '2026-08-08T00:00:00.000Z',
@@ -264,6 +269,14 @@ function stableScore(seed: string, min: number, max: number) {
   return Math.round(min + (hash / 9973) * (max - min))
 }
 
+function formatDateish(value: string) {
+  if (!value) {
+    return ''
+  }
+  const parsed = new Date(value)
+  return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleDateString()
+}
+
 function buildRows(teams: Team[]): WarRoomRow[] {
   const ordered = [...teams].sort((a, b) => b.sourceConfidence - a.sourceConfidence || a.displayName.localeCompare(b.displayName))
   const rows: WarRoomRow[] = []
@@ -301,6 +314,7 @@ function App() {
   const [query, setQuery] = useState('')
   const [conference, setConference] = useState('All')
   const [selectedTeamId, setSelectedTeamId] = useState(fallbackSnapshot.teams[0].id)
+  const [dataView, setDataView] = useState<DataView>('stats')
 
   useEffect(() => {
     fetch('/data/fbs-snapshot.json')
@@ -539,6 +553,125 @@ function App() {
                 <span key={article.headline}>{article.headline}</span>
               ))}
               {!selectedNews.length && <span>No news rows collected yet.</span>}
+            </div>
+          </div>
+          <div className="data-browser">
+            <div className="view-tabs" aria-label="Team data views">
+              {[
+                ['stats', `Stats ${selectedStats.length}`],
+                ['roster', `Roster ${selectedRoster.length}`],
+                ['news', `News ${selectedNews.length}`],
+                ['schedule', `Schedule ${selectedSchedule.length}`],
+              ].map(([view, label]) => (
+                <button
+                  className={dataView === view ? 'active' : ''}
+                  key={view}
+                  onClick={() => setDataView(view as DataView)}
+                  type="button"
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="data-table-wrap">
+              {dataView === 'stats' && (
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Category</th>
+                      <th>Metric</th>
+                      <th>Value</th>
+                      <th>Per Game</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedStats.map((stat) => (
+                      <tr key={`${stat.category}-${stat.displayName}`}>
+                        <td>{stat.category}</td>
+                        <td>{stat.displayName}</td>
+                        <td>{stat.displayValue}</td>
+                        <td>{stat.perGameDisplayValue}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+              {dataView === 'roster' && (
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Pos</th>
+                      <th>Year</th>
+                      <th>Size</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedRoster.map((player) => (
+                      <tr key={`${player.name}-${player.position}-${player.height}`}>
+                        <td>{player.name}</td>
+                        <td>{player.position || player.positionGroup}</td>
+                        <td>{player.year}</td>
+                        <td>
+                          {[player.height, player.weight].filter(Boolean).join(' / ')}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+              {dataView === 'news' && (
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Headline</th>
+                      <th>Published</th>
+                      <th>Attributed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedNews.map((article) => (
+                      <tr key={`${article.headline}-${article.published}`}>
+                        <td>
+                          <strong>{article.headline}</strong>
+                          <span>{article.description}</span>
+                        </td>
+                        <td>{article.published ? new Date(article.published).toLocaleDateString() : ''}</td>
+                        <td>{article.attributed ? 'yes' : 'review'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+              {dataView === 'schedule' && (
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Game</th>
+                      <th>Time</th>
+                      <th>TV</th>
+                      <th>Method</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedSchedule.map((game) => (
+                      <tr key={`${game.date}-${game.shortName}`}>
+                        <td>{formatDateish(game.date)}</td>
+                        <td>{game.shortName}</td>
+                        <td>{game.time ?? ''}</td>
+                        <td>{game.tv ?? ''}</td>
+                        <td>{game.collectionMethod ?? 'api'}</td>
+                      </tr>
+                    ))}
+                    {!selectedSchedule.length && (
+                      <tr>
+                        <td colSpan={5}>No schedule rows collected from current sources for this season yet.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </section>

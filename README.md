@@ -58,12 +58,12 @@ The current public collection pass gathers:
 
 - Roster players by team and position group
 - Team stat rows by category
-- Team schedule rows when the public endpoint returns them for the selected season
+- Team schedule rows from the public endpoint, with an ESPN schedule-page HTML scrape fallback when the endpoint is empty
 - Injury rows when the public endpoint returns structured injury data
 - ESPN news rows with team attribution metadata
 - Per-team source status for debugging endpoint gaps
 
-Current caveat: because 2026 is still preseason, ESPN returns empty schedule rows for many teams and no useful structured injury rows on the probed endpoint. The mart schema is ready for those rows as soon as sources expose them.
+Current caveat: ESPN's public injury endpoint did not return useful structured injury rows during the current preseason pass. The mart schema is ready for those rows as soon as a reliable source exposes them.
 
 ## Microblog News Ingestion
 

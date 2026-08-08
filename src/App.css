@@ -378,6 +378,64 @@ input {
   line-height: 1.35;
 }
 
+.data-browser {
+  margin-top: 18px;
+}
+
+.view-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.view-tabs button {
+  min-height: 36px;
+  padding: 0 12px;
+  color: #234e52;
+  background: #edf4ef;
+  border: 1px solid #cbd8d2;
+  border-radius: 6px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.view-tabs button.active {
+  color: #f8f2df;
+  background: #234e52;
+  border-color: #17313a;
+}
+
+.data-table-wrap {
+  max-height: 420px;
+  overflow: auto;
+  border: 1px solid #d8ded8;
+  border-radius: 8px;
+}
+
+.data-table {
+  min-width: 680px;
+}
+
+.data-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f7f1df;
+}
+
+.data-table td strong,
+.data-table td span {
+  display: block;
+}
+
+.data-table td span {
+  max-width: 620px;
+  margin-top: 4px;
+  color: #627176;
+  line-height: 1.35;
+}
+
 .analytics-panel .section-title,
 .war-room .section-title,
 .coverage-band .section-title {

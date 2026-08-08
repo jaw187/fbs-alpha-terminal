@@ -53,6 +53,18 @@ async function getJson<T>(url: string): Promise<FetchResult<T>> {
   }
 }
 
+async function getText(url: string): Promise<FetchResult<string>> {
+  try {
+    const response = await fetch(url)
+    if (!response.ok) {
+      return { ok: false, url, error: `${response.status} ${response.statusText}` }
+    }
+    return { ok: true, url, data: await response.text() }
+  } catch (error) {
+    return { ok: false, url, error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
 async function mapConcurrent<T, R>(items: T[], worker: (item: T) => Promise<R>) {
   const results: R[] = []
   let nextIndex = 0
@@ -142,6 +154,71 @@ function flattenSchedule(team: Snapshot['teams'][number], schedule: any, sourceU
   }))
 }
 
+function decodeHtml(value: string) {
+  return value
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function stripTags(value: string) {
+  return decodeHtml(value.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' '))
+}
+
+function scrapeScheduleFromHtml(team: Snapshot['teams'][number], html: string, sourceUrl: string) {
+  const rows = Array.from(html.matchAll(/<tr\b[^>]*class="[^"]*Table__TR[^"]*"[^>]*>([\s\S]*?)<\/tr>/g)).map((match) => match[1])
+  return rows
+    .map((row, index) => {
+      const cells = Array.from(row.matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/g)).map((match) => match[1])
+      if (cells.length < 4 || /Table__Headers|Table__Title/.test(row)) {
+        return null
+      }
+      const date = stripTags(cells[0])
+      const opponentCell = cells[1]
+      const opponentId = opponentCell.match(/\/team\/_\/id\/([^/"]+)/)?.[1] ?? ''
+      const opponent = decodeHtml(opponentCell.match(/title="([^"]+)"/)?.[1] ?? stripTags(opponentCell).replace(/^(vs|@)\s+/i, ''))
+      const homeAway = /\bvs\b/.test(stripTags(opponentCell)) ? 'home' : /\b@\b/.test(stripTags(opponentCell)) ? 'away' : ''
+      const time = stripTags(cells[2])
+      const tv = stripTags(cells[3])
+
+      if (!date || !opponent) {
+        return null
+      }
+
+      return {
+        teamId: team.id,
+        team: team.displayName,
+        sourceUrl,
+        eventId: `scraped-${team.id}-${season}-${index}`,
+        date,
+        name: `${team.shortDisplayName} ${homeAway === 'home' ? 'vs' : homeAway === 'away' ? 'at' : 'vs'} ${opponent}`,
+        shortName: `${team.abbreviation} ${homeAway === 'home' ? 'vs' : homeAway === 'away' ? '@' : 'vs'} ${opponent}`,
+        seasonType: 'Regular Season',
+        week: null,
+        completed: false,
+        neutralSite: false,
+        venue: '',
+        time,
+        tv,
+        competitors: [
+          {
+            homeAway,
+            winner: false,
+            teamId: opponentId,
+            team: opponent,
+            score: '',
+          },
+        ],
+        collectionMethod: 'html-scrape',
+      }
+    })
+    .filter(Boolean)
+}
+
 function flattenInjuries(team: Snapshot['teams'][number], injuries: any, sourceUrl: string) {
   if (!injuries || !Object.keys(injuries).length) {
     return []
@@ -195,6 +272,7 @@ async function collectTeam(team: Snapshot['teams'][number]) {
     roster: `${siteBase}/teams/${team.id}/roster`,
     stats: `${siteBase}/teams/${team.id}/statistics`,
     schedule: `${siteBase}/teams/${team.id}/schedule?season=${season}`,
+    scheduleHtml: `https://www.espn.com/college-football/team/schedule/_/id/${team.id}/season/${season}`,
     injuries: `${siteBase}/teams/${team.id}/injuries`,
     news: `${siteBase}/news?team=${team.id}&limit=${newsLimit}`,
   }
@@ -206,18 +284,30 @@ async function collectTeam(team: Snapshot['teams'][number]) {
     getJson<any>(urls.news),
   ])
 
+  let scheduleRows = schedule.ok && schedule.data ? flattenSchedule(team, schedule.data, urls.schedule) : []
+  let scheduleStatus = schedule.ok ? 'ok:api' : schedule.error
+  if (!scheduleRows.length) {
+    const scheduleHtml = await getText(urls.scheduleHtml)
+    if (scheduleHtml.ok && scheduleHtml.data) {
+      scheduleRows = scrapeScheduleFromHtml(team, scheduleHtml.data, urls.scheduleHtml)
+      scheduleStatus = scheduleRows.length ? 'ok:html-scrape' : 'empty:api-and-html'
+    } else {
+      scheduleStatus = `empty:api; html:${scheduleHtml.error}`
+    }
+  }
+
   return {
     teamId: team.id,
     team: team.displayName,
     roster: roster.ok && roster.data ? flattenRoster(team, roster.data, urls.roster) : [],
     stats: stats.ok && stats.data ? flattenStats(team, stats.data, urls.stats) : [],
-    schedule: schedule.ok && schedule.data ? flattenSchedule(team, schedule.data, urls.schedule) : [],
+    schedule: scheduleRows,
     injuries: injuries.ok && injuries.data ? flattenInjuries(team, injuries.data, urls.injuries) : [],
     news: news.ok && news.data ? flattenNews(team, news.data, urls.news) : [],
     sourceStatus: {
       roster: roster.ok ? 'ok' : roster.error,
       stats: stats.ok ? 'ok' : stats.error,
-      schedule: schedule.ok ? 'ok' : schedule.error,
+      schedule: scheduleStatus,
       injuries: injuries.ok ? 'ok' : injuries.error,
       news: news.ok ? 'ok' : news.error,
     },
