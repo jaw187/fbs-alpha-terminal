@@ -7,6 +7,7 @@
     "dev": "vite",
     "data:refresh": "node scripts/refresh-data.mjs",
     "news:ingest": "tsx scripts/ingest-microblogs.ts",
+    "stats:collect": "tsx scripts/collect-stats.ts",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"

@@ -4,7 +4,6 @@ import {
   BarChart3,
   Crosshair,
   DatabaseZap,
-  ExternalLink,
   Filter,
   LineChart,
   Newspaper,
@@ -61,6 +60,54 @@ type Snapshot = {
   season: number
   teams: Team[]
   sources: Source[]
+}
+
+type StatsMart = {
+  generatedAt: string
+  rowCounts: {
+    rosterPlayers: number
+    teamStats: number
+    scheduleGames: number
+    injuries: number
+    news: number
+    attributedNews: number
+  }
+  rosterPlayers: Array<{
+    teamId: string
+    positionGroup: string
+    name: string
+    position: string
+    year: string
+    height: string
+    weight: string
+  }>
+  teamStats: Array<{
+    teamId: string
+    category: string
+    displayName: string
+    abbreviation: string
+    displayValue: string
+    perGameDisplayValue: string
+  }>
+  scheduleGames: Array<{
+    teamId: string
+    date: string
+    shortName: string
+    venue: string
+  }>
+  injuries: Array<{
+    teamId: string
+    athlete: string
+    status: string
+    detail: string
+  }>
+  news: Array<{
+    teamId: string
+    headline: string
+    description: string
+    published: string
+    attributed: boolean
+  }>
 }
 
 type WarRoomRow = {
@@ -177,6 +224,23 @@ const defaultSources: Source[] = [
   },
 ]
 
+const emptyStatsMart: StatsMart = {
+  generatedAt: '',
+  rowCounts: {
+    rosterPlayers: 0,
+    teamStats: 0,
+    scheduleGames: 0,
+    injuries: 0,
+    news: 0,
+    attributedNews: 0,
+  },
+  rosterPlayers: [],
+  teamStats: [],
+  scheduleGames: [],
+  injuries: [],
+  news: [],
+}
+
 const conferenceOrder = [
   'All',
   'Southeastern Conference',
@@ -198,10 +262,6 @@ function stableScore(seed: string, min: number, max: number) {
     hash = (hash * 31 + seed.charCodeAt(index)) % 9973
   }
   return Math.round(min + (hash / 9973) * (max - min))
-}
-
-function findLink(team: Team, label: string) {
-  return team.links.find((link) => link.rel.includes(label) || link.text.toLowerCase().includes(label))
 }
 
 function buildRows(teams: Team[]): WarRoomRow[] {
@@ -237,6 +297,7 @@ function buildRows(teams: Team[]): WarRoomRow[] {
 
 function App() {
   const [snapshot, setSnapshot] = useState<Snapshot>(fallbackSnapshot)
+  const [statsMart, setStatsMart] = useState<StatsMart>(emptyStatsMart)
   const [query, setQuery] = useState('')
   const [conference, setConference] = useState('All')
   const [selectedTeamId, setSelectedTeamId] = useState(fallbackSnapshot.teams[0].id)
@@ -251,6 +312,13 @@ function App() {
         }
       })
       .catch(() => setSnapshot(fallbackSnapshot))
+  }, [])
+
+  useEffect(() => {
+    fetch('/data/team-stat-marts.json')
+      .then((response) => (response.ok ? response.json() : emptyStatsMart))
+      .then((data: StatsMart) => setStatsMart(data.rowCounts ? data : emptyStatsMart))
+      .catch(() => setStatsMart(emptyStatsMart))
   }, [])
 
   const sources = snapshot.sources?.length ? snapshot.sources : defaultSources
@@ -271,6 +339,19 @@ function App() {
 
   const warRoomRows = useMemo(() => buildRows(filteredTeams.length > 3 ? filteredTeams : snapshot.teams), [filteredTeams, snapshot.teams])
   const selectedTeam = snapshot.teams.find((team) => team.id === selectedTeamId) ?? snapshot.teams[0]
+  const selectedStats = statsMart.teamStats.filter((stat) => stat.teamId === selectedTeam.id)
+  const selectedRoster = statsMart.rosterPlayers.filter((player) => player.teamId === selectedTeam.id)
+  const selectedNews = statsMart.news.filter((article) => article.teamId === selectedTeam.id)
+  const selectedSchedule = statsMart.scheduleGames.filter((game) => game.teamId === selectedTeam.id)
+  const rosterByGroup = Array.from(
+    selectedRoster.reduce((map, player) => {
+      map.set(player.positionGroup, (map.get(player.positionGroup) ?? 0) + 1)
+      return map
+    }, new Map<string, number>()),
+  )
+  const featuredStats = selectedStats
+    .filter((stat) => ['passing', 'rushing', 'receiving', 'defensive', 'scoring'].includes(stat.category))
+    .slice(0, 8)
   const conferenceCoverage = useMemo(
     () =>
       Array.from(
@@ -337,18 +418,18 @@ function App() {
         </div>
         <div>
           <Swords size={20} />
-          <strong>{warRoomRows.length}</strong>
-          <span>war-room matchups</span>
+          <strong>{statsMart.rowCounts.rosterPlayers}</strong>
+          <span>roster rows collected</span>
         </div>
         <div>
           <Newspaper size={20} />
-          <strong>{trustedMicroblogSources.length}</strong>
-          <span>trusted social feeds</span>
+          <strong>{statsMart.rowCounts.teamStats}</strong>
+          <span>stat rows collected</span>
         </div>
         <div>
           <Activity size={20} />
-          <strong>{Math.round(snapshot.teams.reduce((sum, team) => sum + team.sourceConfidence, 0) / snapshot.teams.length)}%</strong>
-          <span>avg source confidence</span>
+          <strong>{statsMart.rowCounts.news}</strong>
+          <span>news rows collected</span>
         </div>
       </section>
 
@@ -392,24 +473,29 @@ function App() {
             <div>
               <p className="eyebrow">{selectedTeam.conference}</p>
               <h3>{selectedTeam.displayName}</h3>
-              <p>Confidence {selectedTeam.sourceConfidence}% across identity, schedule, roster and stat source paths.</p>
+              <p>
+                Local mart contains {selectedRoster.length} roster rows, {selectedStats.length} stat rows, {selectedNews.length}{' '}
+                news rows and {selectedSchedule.length} schedule rows for this team.
+              </p>
             </div>
           </div>
           <div className="profile-grid">
-            {[
-              ['Schedule', 'schedule'],
-              ['Roster', 'roster'],
-              ['Stats', 'stats'],
-              ['News', 'clubhouse'],
-            ].map(([label, rel]) => {
-              const link = findLink(selectedTeam, rel)
-              return (
-                <a href={link?.href ?? `https://www.espn.com/college-football/team/_/id/${selectedTeam.id}`} key={label} target="_blank">
-                  <ExternalLink size={16} />
-                  <span>{label}</span>
-                </a>
-              )
-            })}
+            <div>
+              <strong>{selectedRoster.length}</strong>
+              <span>roster rows</span>
+            </div>
+            <div>
+              <strong>{selectedStats.length}</strong>
+              <span>stat rows</span>
+            </div>
+            <div>
+              <strong>{selectedSchedule.length}</strong>
+              <span>schedule rows</span>
+            </div>
+            <div>
+              <strong>{selectedNews.length}</strong>
+              <span>news rows</span>
+            </div>
           </div>
           <div className="signal-grid">
             <div>
@@ -426,6 +512,33 @@ function App() {
               <p className="eyebrow">Roster Read</p>
               <strong>{selectedTeam.sourceConfidence}</strong>
               <span>verified depth</span>
+            </div>
+          </div>
+          <div className="local-data-grid">
+            <div>
+              <p className="eyebrow">Roster Composition</p>
+              {rosterByGroup.slice(0, 5).map(([group, count]) => (
+                <span key={group}>
+                  {group}: {count}
+                </span>
+              ))}
+              {!rosterByGroup.length && <span>No roster rows collected yet.</span>}
+            </div>
+            <div>
+              <p className="eyebrow">Collected Stats</p>
+              {featuredStats.slice(0, 5).map((stat) => (
+                <span key={`${stat.category}-${stat.displayName}`}>
+                  {stat.displayName}: {stat.displayValue}
+                </span>
+              ))}
+              {!featuredStats.length && <span>No stat rows collected yet.</span>}
+            </div>
+            <div>
+              <p className="eyebrow">Local News Rows</p>
+              {selectedNews.slice(0, 3).map((article) => (
+                <span key={article.headline}>{article.headline}</span>
+              ))}
+              {!selectedNews.length && <span>No news rows collected yet.</span>}
             </div>
           </div>
         </section>

@@ -8,7 +8,8 @@ LineVault Alpha is built to compile relevant information about every Division I 
 
 - FBS team universe sourced from ESPN's public 2026 FBS group.
 - Searchable team rail with conference filtering.
-- Team profile links for schedule, roster, stats and news/source pages.
+- Team profiles composed from local roster, stat, schedule and news rows.
+- Local team-stat marts composed from public structured data.
 - Source-confidence scoring for each team profile.
 - War-room view showing many matchups at once.
 - Matchup signal columns for edge, trend, availability risk, roster clarity and market-watch prompts.
@@ -41,9 +42,28 @@ This writes `public/data/fbs-snapshot.json`. The current adapter resolves:
 - Conference membership
 - Team display metadata
 - Team logos
-- ESPN source links for schedule, roster, stats and clubhouse/news pages
+- ESPN source URL provenance for schedule, roster, stats and clubhouse/news rows
 
 Optional future adapters are intentionally separated so paid keys and source-specific terms can be handled cleanly.
+
+## Stats Collection
+
+```bash
+npm run stats:collect
+```
+
+This writes `public/data/team-stat-marts.json` and moves the app away from outbound source links as the primary data surface. Source URLs are still retained per row for provenance, but the UI reads local normalized rows.
+
+The current public collection pass gathers:
+
+- Roster players by team and position group
+- Team stat rows by category
+- Team schedule rows when the public endpoint returns them for the selected season
+- Injury rows when the public endpoint returns structured injury data
+- ESPN news rows with team attribution metadata
+- Per-team source status for debugging endpoint gaps
+
+Current caveat: because 2026 is still preseason, ESPN returns empty schedule rows for many teams and no useful structured injury rows on the probed endpoint. The mart schema is ready for those rows as soon as sources expose them.
 
 ## Microblog News Ingestion
 
@@ -90,6 +110,7 @@ Initial trusted microblog sources include:
 ```bash
 npm install
 npm run data:refresh
+npm run stats:collect
 npm run news:ingest
 npm run dev
 ```

@@ -308,15 +308,24 @@ input {
   margin-top: 20px;
 }
 
-.profile-grid a {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
+.profile-grid div {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
   padding: 10px;
   color: #f8f2df;
   background: #17313a;
   border-radius: 6px;
   font-weight: 800;
+}
+
+.profile-grid strong {
+  font-size: 1.5rem;
+}
+
+.profile-grid span {
+  font-size: 0.78rem;
+  text-transform: uppercase;
 }
 
 .signal-grid {
@@ -343,6 +352,30 @@ input {
   color: #627176;
   font-size: 0.86rem;
   font-weight: 750;
+}
+
+.local-data-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.local-data-grid div {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-height: 150px;
+  padding: 14px;
+  background: #fff8e8;
+  border: 1px solid #d9ceb2;
+  border-radius: 8px;
+}
+
+.local-data-grid span {
+  color: #243238;
+  font-size: 0.88rem;
+  line-height: 1.35;
 }
 
 .analytics-panel .section-title,
@@ -523,6 +556,7 @@ meter {
   .metrics-strip,
   .profile-grid,
   .signal-grid,
+  .local-data-grid,
   .source-list {
     grid-template-columns: 1fr;
   }
