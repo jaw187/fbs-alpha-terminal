@@ -1,0 +1,446 @@
+{
+  "generatedAt": "2026-08-08T17:30:43.482Z",
+  "season": 2026,
+  "sourceCount": 24,
+  "rawPostCount": 0,
+  "acceptedCount": 0,
+  "rejectedCount": 0,
+  "routingRules": {
+    "broadFeeds": "National/publication posts must match explicit team aliases in text or linked article context.",
+    "conferenceFeeds": "Conference posts are constrained to member teams before alias matching.",
+    "teamFeeds": "Official team feeds may route directly once team-owned handles are added.",
+    "unresolved": "Posts with no team match are rejected from team news and kept for review."
+  },
+  "sources": [
+    {
+      "id": "x-pete-thamel",
+      "platform": "x",
+      "handle": "@PeteThamel",
+      "displayName": "Pete Thamel",
+      "url": "https://x.com/PeteThamel",
+      "scope": "national",
+      "outlet": "ESPN",
+      "trustTier": "reporter",
+      "confidence": 92,
+      "coverage": [
+        "FBS",
+        "coaching",
+        "injuries",
+        "realignment",
+        "breaking news"
+      ],
+      "routingPolicy": "team_mention_required",
+      "notes": "ESPN senior college football writer and College GameDay insider."
+    },
+    {
+      "id": "x-brett-mcmurphy",
+      "platform": "x",
+      "handle": "@Brett_McMurphy",
+      "displayName": "Brett McMurphy",
+      "url": "https://x.com/Brett_McMurphy",
+      "scope": "national",
+      "outlet": "On3",
+      "trustTier": "reporter",
+      "confidence": 91,
+      "coverage": [
+        "FBS",
+        "bowls",
+        "coaching",
+        "realignment",
+        "breaking news"
+      ],
+      "routingPolicy": "team_mention_required",
+      "notes": "National college football insider with a long breaking-news record."
+    },
+    {
+      "id": "x-ross-dellenger",
+      "platform": "x",
+      "handle": "@RossDellenger",
+      "displayName": "Ross Dellenger",
+      "url": "https://x.com/RossDellenger",
+      "scope": "national",
+      "outlet": "Yahoo Sports",
+      "trustTier": "reporter",
+      "confidence": 90,
+      "coverage": [
+        "FBS",
+        "NCAA policy",
+        "realignment",
+        "coaching",
+        "breaking news"
+      ],
+      "routingPolicy": "team_mention_required",
+      "notes": "Yahoo Sports senior college football reporter."
+    },
+    {
+      "id": "x-bruce-feldman",
+      "platform": "x",
+      "handle": "@BruceFeldmanCFB",
+      "displayName": "Bruce Feldman",
+      "url": "https://x.com/BruceFeldmanCFB",
+      "scope": "national",
+      "outlet": "The Athletic / FOX",
+      "trustTier": "reporter",
+      "confidence": 90,
+      "coverage": [
+        "FBS",
+        "coaching",
+        "roster intel",
+        "program reporting"
+      ],
+      "routingPolicy": "team_mention_required",
+      "notes": "National college football reporter for The Athletic and FOX."
+    },
+    {
+      "id": "x-nicole-auerbach",
+      "platform": "x",
+      "handle": "@NicoleAuerbach",
+      "displayName": "Nicole Auerbach",
+      "url": "https://x.com/NicoleAuerbach",
+      "scope": "national",
+      "outlet": "NBC Sports",
+      "trustTier": "reporter",
+      "confidence": 88,
+      "coverage": [
+        "FBS",
+        "Big Ten",
+        "NCAA policy",
+        "breaking news"
+      ],
+      "routingPolicy": "team_mention_required",
+      "notes": "NBC Sports national college sports insider."
+    },
+    {
+      "id": "x-adam-rittenberg",
+      "platform": "x",
+      "handle": "@ESPNRittenberg",
+      "displayName": "Adam Rittenberg",
+      "url": "https://x.com/ESPNRittenberg",
+      "scope": "national",
+      "outlet": "ESPN",
+      "trustTier": "reporter",
+      "confidence": 88,
+      "coverage": [
+        "FBS",
+        "Big Ten",
+        "coaching",
+        "program reporting"
+      ],
+      "routingPolicy": "team_mention_required",
+      "notes": "ESPN senior writer covering college football nationally."
+    },
+    {
+      "id": "x-chris-vannini",
+      "platform": "x",
+      "handle": "@ChrisVannini",
+      "displayName": "Chris Vannini",
+      "url": "https://x.com/ChrisVannini",
+      "scope": "national",
+      "outlet": "The Athletic",
+      "trustTier": "reporter",
+      "confidence": 87,
+      "coverage": [
+        "FBS",
+        "Group of Five",
+        "coaching",
+        "program reporting"
+      ],
+      "routingPolicy": "team_mention_required",
+      "notes": "The Athletic senior writer with strong national and G5 coverage."
+    },
+    {
+      "id": "x-stewart-mandel",
+      "platform": "x",
+      "handle": "@slmandel",
+      "displayName": "Stewart Mandel",
+      "url": "https://x.com/slmandel",
+      "scope": "national",
+      "outlet": "The Athletic",
+      "trustTier": "analyst",
+      "confidence": 84,
+      "coverage": [
+        "FBS",
+        "rankings",
+        "playoff",
+        "program analysis"
+      ],
+      "routingPolicy": "team_mention_required",
+      "notes": "Useful for national framing; require team attribution before event creation."
+    },
+    {
+      "id": "x-max-olson",
+      "platform": "x",
+      "handle": "@max_olson",
+      "displayName": "Max Olson",
+      "url": "https://x.com/max_olson",
+      "scope": "national",
+      "outlet": "ESPN",
+      "trustTier": "reporter",
+      "confidence": 86,
+      "coverage": [
+        "FBS",
+        "transfer portal",
+        "rosters",
+        "player movement"
+      ],
+      "routingPolicy": "team_mention_required",
+      "notes": "Strong roster and portal signal; link posts to named teams/players only."
+    },
+    {
+      "id": "x-andy-staples",
+      "platform": "x",
+      "handle": "@Andy_Staples",
+      "displayName": "Andy Staples",
+      "url": "https://x.com/Andy_Staples",
+      "scope": "national",
+      "outlet": "On3",
+      "trustTier": "analyst",
+      "confidence": 83,
+      "coverage": [
+        "FBS",
+        "analysis",
+        "coaching",
+        "realignment"
+      ],
+      "routingPolicy": "team_mention_required",
+      "notes": "Good analysis source; promote only facts with explicit team evidence."
+    },
+    {
+      "id": "x-ralph-russo",
+      "platform": "x",
+      "handle": "@ralphDrussoATH",
+      "displayName": "Ralph D. Russo",
+      "url": "https://x.com/ralphDrussoATH",
+      "scope": "national",
+      "outlet": "The Athletic",
+      "trustTier": "reporter",
+      "confidence": 86,
+      "coverage": [
+        "FBS",
+        "AP poll",
+        "national news",
+        "analysis"
+      ],
+      "routingPolicy": "team_mention_required",
+      "notes": "Former AP college football writer; useful for poll and national context."
+    },
+    {
+      "id": "x-ap-top25",
+      "platform": "x",
+      "handle": "@AP_Top25",
+      "displayName": "AP Top 25",
+      "url": "https://x.com/AP_Top25",
+      "scope": "publication",
+      "outlet": "Associated Press",
+      "trustTier": "desk",
+      "confidence": 89,
+      "coverage": [
+        "FBS",
+        "rankings",
+        "polls",
+        "national news"
+      ],
+      "routingPolicy": "article_team_match",
+      "notes": "Use for rankings/news; attach teams named in the post or linked AP story."
+    },
+    {
+      "id": "bsky-split-zone-duo",
+      "platform": "bluesky",
+      "handle": "@splitzoneduo.com",
+      "displayName": "Split Zone Duo",
+      "url": "https://bsky.app/profile/splitzoneduo.com",
+      "scope": "national",
+      "outlet": "Split Zone Duo",
+      "trustTier": "analyst",
+      "confidence": 82,
+      "coverage": [
+        "FBS",
+        "program analysis",
+        "realignment",
+        "coaching"
+      ],
+      "routingPolicy": "team_mention_required",
+      "notes": "Strong whole-sport context; route to teams only when mentions are explicit."
+    },
+    {
+      "id": "bsky-the-athletic",
+      "platform": "bluesky",
+      "handle": "@theathletic.com",
+      "displayName": "The Athletic",
+      "url": "https://bsky.app/profile/theathletic.com",
+      "scope": "publication",
+      "outlet": "The Athletic",
+      "trustTier": "desk",
+      "confidence": 86,
+      "coverage": [
+        "FBS",
+        "national news",
+        "analysis"
+      ],
+      "routingPolicy": "article_team_match",
+      "notes": "Publication-wide feed; require article title/body team resolution."
+    },
+    {
+      "id": "x-acc-football",
+      "platform": "x",
+      "handle": "@ACCFootball",
+      "displayName": "ACC Football",
+      "url": "https://x.com/ACCFootball",
+      "scope": "conference",
+      "outlet": "Atlantic Coast Conference",
+      "trustTier": "official",
+      "confidence": 90,
+      "coverage": [
+        "Atlantic Coast Conference"
+      ],
+      "routingPolicy": "conference_team_match",
+      "notes": "Official ACC football account; route only to ACC teams mentioned."
+    },
+    {
+      "id": "x-big-ten-football",
+      "platform": "x",
+      "handle": "@B1Gfootball",
+      "displayName": "Big Ten Football",
+      "url": "https://x.com/B1Gfootball",
+      "scope": "conference",
+      "outlet": "Big Ten Network / Big Ten",
+      "trustTier": "official",
+      "confidence": 90,
+      "coverage": [
+        "Big Ten Conference"
+      ],
+      "routingPolicy": "conference_team_match",
+      "notes": "Official Big Ten football channel powered by Big Ten Network."
+    },
+    {
+      "id": "x-big12",
+      "platform": "x",
+      "handle": "@Big12Conference",
+      "displayName": "Big 12 Conference",
+      "url": "https://x.com/Big12Conference",
+      "scope": "conference",
+      "outlet": "Big 12 Conference",
+      "trustTier": "official",
+      "confidence": 89,
+      "coverage": [
+        "Big 12 Conference"
+      ],
+      "routingPolicy": "conference_team_match",
+      "notes": "Official conference account; football posts need team mention resolution."
+    },
+    {
+      "id": "x-sec",
+      "platform": "x",
+      "handle": "@SEC",
+      "displayName": "Southeastern Conference",
+      "url": "https://x.com/SEC",
+      "scope": "conference",
+      "outlet": "Southeastern Conference",
+      "trustTier": "official",
+      "confidence": 89,
+      "coverage": [
+        "Southeastern Conference"
+      ],
+      "routingPolicy": "conference_team_match",
+      "notes": "Official conference account; cross-sport posts need football/team filtering."
+    },
+    {
+      "id": "x-american-conf",
+      "platform": "x",
+      "handle": "@American_Conf",
+      "displayName": "American Conference",
+      "url": "https://x.com/American_Conf",
+      "scope": "conference",
+      "outlet": "American Conference",
+      "trustTier": "official",
+      "confidence": 86,
+      "coverage": [
+        "American Conference"
+      ],
+      "routingPolicy": "conference_team_match",
+      "notes": "Official American Conference account; filter to football and member team mentions."
+    },
+    {
+      "id": "x-conference-usa",
+      "platform": "x",
+      "handle": "@ConferenceUSA",
+      "displayName": "Conference USA",
+      "url": "https://x.com/ConferenceUSA",
+      "scope": "conference",
+      "outlet": "Conference USA",
+      "trustTier": "official",
+      "confidence": 86,
+      "coverage": [
+        "Conference USA"
+      ],
+      "routingPolicy": "conference_team_match",
+      "notes": "Official C-USA account; route by explicit team match."
+    },
+    {
+      "id": "x-mac-sports",
+      "platform": "x",
+      "handle": "@MACSports",
+      "displayName": "Mid-American Conference",
+      "url": "https://x.com/MACSports",
+      "scope": "conference",
+      "outlet": "Mid-American Conference",
+      "trustTier": "official",
+      "confidence": 86,
+      "coverage": [
+        "Mid-American Conference"
+      ],
+      "routingPolicy": "conference_team_match",
+      "notes": "Official MAC account; route only football/team-specific posts."
+    },
+    {
+      "id": "x-mountain-west",
+      "platform": "x",
+      "handle": "@MountainWest",
+      "displayName": "Mountain West",
+      "url": "https://x.com/MountainWest",
+      "scope": "conference",
+      "outlet": "Mountain West Conference",
+      "trustTier": "official",
+      "confidence": 86,
+      "coverage": [
+        "Mountain West Conference"
+      ],
+      "routingPolicy": "conference_team_match",
+      "notes": "Official MW account; use conference membership as routing boundary."
+    },
+    {
+      "id": "x-sun-belt",
+      "platform": "x",
+      "handle": "@SunBelt",
+      "displayName": "Sun Belt",
+      "url": "https://x.com/SunBelt",
+      "scope": "conference",
+      "outlet": "Sun Belt Conference",
+      "trustTier": "official",
+      "confidence": 86,
+      "coverage": [
+        "Sun Belt Conference"
+      ],
+      "routingPolicy": "conference_team_match",
+      "notes": "Official Sun Belt account; team mention required for event creation."
+    },
+    {
+      "id": "x-pac12",
+      "platform": "x",
+      "handle": "@pac12",
+      "displayName": "Pac-12 Conference",
+      "url": "https://x.com/pac12",
+      "scope": "conference",
+      "outlet": "Pac-12 Conference",
+      "trustTier": "official",
+      "confidence": 84,
+      "coverage": [
+        "Pac-12 Conference"
+      ],
+      "routingPolicy": "conference_team_match",
+      "notes": "Official Pac-12 account; useful for remaining and future conference context."
+    }
+  ],
+  "events": [],
+  "reviewQueue": []
+}

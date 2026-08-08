@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "data:refresh": "node scripts/refresh-data.mjs",
+    "news:ingest": "tsx scripts/ingest-microblogs.ts",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"
@@ -22,6 +23,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
     "oxlint": "^1.75.0",
+    "tsx": "^4.23.11",
     "typescript": "~6.0.2",
     "vite": "^8.2.0"
   }

@@ -25,6 +25,7 @@ import {
   YAxis,
 } from 'recharts'
 import './App.css'
+import { trustedMicroblogSources } from './data/microblogSources'
 
 type TeamLink = {
   rel: string[]
@@ -341,8 +342,8 @@ function App() {
         </div>
         <div>
           <Newspaper size={20} />
-          <strong>{sources.length}</strong>
-          <span>source families tracked</span>
+          <strong>{trustedMicroblogSources.length}</strong>
+          <span>trusted social feeds</span>
         </div>
         <div>
           <Activity size={20} />
@@ -518,6 +519,28 @@ function App() {
                 {source.reliability} / {source.status}
               </small>
             </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="microblog-band">
+        <div className="section-title">
+          <Newspaper size={20} />
+          <h3>Trusted Microblog Watchlist</h3>
+        </div>
+        <p>
+          Broad national and publication feeds are not allowed to create team news by themselves. The ingestion layer must match
+          each message to team aliases, conference boundaries, or linked-article text before it becomes a team event.
+        </p>
+        <div className="account-grid">
+          {trustedMicroblogSources.map((source) => (
+            <a href={source.url} key={source.id} target="_blank">
+              <span>{source.handle}</span>
+              <strong>{source.displayName}</strong>
+              <small>
+                {source.platform.toUpperCase()} / {source.trustTier} / {source.routingPolicy.replaceAll('_', ' ')}
+              </small>
+            </a>
           ))}
         </div>
       </section>

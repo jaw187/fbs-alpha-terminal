@@ -13,6 +13,8 @@ LineVault Alpha is built to compile relevant information about every Division I 
 - War-room view showing many matchups at once.
 - Matchup signal columns for edge, trend, availability risk, roster clarity and market-watch prompts.
 - Source redundancy ledger that separates official, licensed and corroborating sources.
+- Trusted microblog watchlist for X, Bluesky and publication feeds.
+- Team attribution rules that reject broad-feed posts unless they resolve to a particular team.
 - Static JSON snapshot so the site builds and runs without private API keys.
 
 ## Source Policy
@@ -43,11 +45,52 @@ This writes `public/data/fbs-snapshot.json`. The current adapter resolves:
 
 Optional future adapters are intentionally separated so paid keys and source-specific terms can be handled cleanly.
 
+## Microblog News Ingestion
+
+Trusted accounts live in `src/data/microblogSources.ts`. The ingestion path uses that registry plus `src/data/newsAttribution.ts` so broad accounts are filtered into team-specific events before the site can treat them as news.
+
+```bash
+npm run news:ingest
+```
+
+By default the command reads `data/raw/microblog-posts.json` and writes `public/data/team-news-events.json`. Set `MICROBLOG_POSTS_FILE` to point at a connector export from X, Bluesky, RSS, Firehose, or any vendor-normalized feed.
+
+Input shape:
+
+```json
+[
+  {
+    "id": "source-post-id",
+    "sourceId": "x-pete-thamel",
+    "text": "Post text",
+    "url": "https://x.com/PeteThamel/status/...",
+    "postedAt": "2026-08-08T17:00:00.000Z",
+    "linkedTitle": "Optional article headline",
+    "linkedText": "Optional fetched article excerpt"
+  }
+]
+```
+
+Routing policy:
+
+- National reporters and publication feeds require explicit team aliases in the post or linked article.
+- Conference feeds are first constrained to teams in that conference, then alias matched.
+- Generic nicknames like Tigers, Bulldogs and Wildcats do not count unless paired with a school/location alias.
+- Multi-team posts create one event per matched team with a confidence penalty.
+- Unmatched posts go to the review queue instead of team news.
+
+Initial trusted microblog sources include:
+
+- X: `@PeteThamel`, `@Brett_McMurphy`, `@RossDellenger`, `@BruceFeldmanCFB`, `@NicoleAuerbach`, `@ESPNRittenberg`, `@ChrisVannini`, `@slmandel`, `@max_olson`, `@Andy_Staples`, `@ralphDrussoATH`, `@AP_Top25`
+- X official/conference: `@ACCFootball`, `@B1Gfootball`, `@Big12Conference`, `@SEC`, `@American_Conf`, `@ConferenceUSA`, `@MACSports`, `@MountainWest`, `@SunBelt`, `@pac12`
+- Bluesky: `@splitzoneduo.com`, `@theathletic.com`
+
 ## Development
 
 ```bash
 npm install
 npm run data:refresh
+npm run news:ingest
 npm run dev
 ```
 
@@ -63,5 +106,6 @@ npm run build
 - Add roster-depth ingestion from school pages with manual review flags.
 - Add NCAA and CFBD stat normalizers for offensive, defensive and special teams trend windows.
 - Add injury/news event history with source corroboration and stale-market detection.
+- Add official team-owned X/Bluesky handles for all FBS programs as they are verified.
 - Add market history, open/current movement and number-shopping views.
 - Add matchup pages with team-vs-team factor deltas and explainable edge cards.

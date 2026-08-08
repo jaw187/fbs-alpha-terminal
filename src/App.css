@@ -192,6 +192,7 @@ h3 {
 .analytics-panel,
 .war-room,
 .source-band,
+.microblog-band,
 .coverage-band {
   background: #fffdf5;
   border: 1px solid #d8ded8;
@@ -352,6 +353,7 @@ input {
 
 .war-room,
 .source-band,
+.microblog-band,
 .coverage-band {
   margin-top: 16px;
   padding: 18px;
@@ -450,6 +452,42 @@ meter {
   font-weight: 800;
 }
 
+.microblog-band p {
+  max-width: 980px;
+  margin: 0 0 14px;
+  color: #59676c;
+  line-height: 1.6;
+}
+
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.account-grid a {
+  display: grid;
+  min-height: 116px;
+  gap: 8px;
+  align-content: start;
+  padding: 14px;
+  background: #edf4ef;
+  border: 1px solid #cbd8d2;
+  border-radius: 8px;
+}
+
+.account-grid span {
+  color: #234e52;
+  font-weight: 850;
+}
+
+.account-grid small {
+  color: #59676c;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .notice {
   display: flex;
   gap: 8px;
@@ -474,6 +512,10 @@ meter {
     grid-template-columns: repeat(2, 1fr);
     max-height: 360px;
   }
+
+  .account-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 760px) {
@@ -482,6 +524,10 @@ meter {
   .profile-grid,
   .signal-grid,
   .source-list {
+    grid-template-columns: 1fr;
+  }
+
+  .account-grid {
     grid-template-columns: 1fr;
   }
 
